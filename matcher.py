@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import cv2
 import random
 import collections
+from scipy import stats, optimize
 
 Match = collections.namedtuple("Match", ["target", "scene"])
 
@@ -83,7 +84,9 @@ class AkazeMatcher:
                 for i in matches for j in matches
             ]
         # Remove zeros
-        distances = [i for i in distances if 0 < i]
+        distances = [i for i in distances if 0 < i and i < 2.5]
+        k = stats.gaussian_kde(distances)
+        s.print(optimize.minimize(lambda x: - 1 * k(x), [0.5]).x)
         s.done(desc="Finished distance histogram")
 
         task.done(desc="Done matching images")
