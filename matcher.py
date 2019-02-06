@@ -1,12 +1,9 @@
 
-
-import matplotlib.pyplot as plt
 import cv2
 import random
-import collections
 from scipy import stats, optimize
-import os
 
+import collections
 Match = collections.namedtuple("Match", ["target", "scene"])
 MatchPair = collections.namedtuple("MatchPair", ["matches", "ratio"])
 
@@ -130,7 +127,8 @@ class AkazeMatcher:
 
 def test_plot(akaze, img, task, hist=False):
 
-    img = cv2.imread(img)
+    import matplotlib.pyplot as plt
+
     matches, distances = akaze.match(
         cv2.cvtColor(img, cv2.COLOR_BGR2GRAY), task=task)
 
@@ -160,14 +158,16 @@ def test_plot(akaze, img, task, hist=False):
 
 if __name__ == "__main__":
     import syllabus
+    from data import dataset
+
     main = syllabus.Task("Test").start()
 
     m = AkazeMatcher(
         cv2.imread("../hx/ref.PNG"), task=main.subtask(), name="HeroX Gate")
 
-    names = os.listdir("../hx/Data_Training")
-    test_plot(
-        m, "../hx/Data_Training/" + random.choice(names),
-        main.subtask())
+    d = dataset.Dataset()
+
+    for _ in range(10):
+        test_plot(m, d.get(), main.subtask())
 
     main.done()
